@@ -4,7 +4,7 @@ export function cursBBCards() {
 }
 
 async function getDataFromApi(currArray) {
-	return await fetch(`https://belarusbank.by/api/kurs_cards`)
+	const dataRes = fetch(`https://belarusbank.by/api/kurs_cards`)
 		.then(result => result.json())
 		.then(data => {
 			const res = {};
@@ -17,5 +17,6 @@ async function getDataFromApi(currArray) {
 			}
 			return res;
 		})
-		.catch(e => e.toString());
+		.catch(e => e.message);
+	return await dataRes;
 }

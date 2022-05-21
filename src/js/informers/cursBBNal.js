@@ -4,7 +4,7 @@ export function cursBBNal(city = 'Минск') {
 }
 
 async function getDataFromApi(city, currArray) {
-	return await fetch(`https://belarusbank.by/api/kursExchange?city=${city}`)
+	const dataRes = fetch(`https://belarusbank.by/api/kursExchange?city=${city}`)
 		.then(result => result.json())
 		.then(data => {
 			const res = {};
@@ -17,5 +17,6 @@ async function getDataFromApi(city, currArray) {
 			}
 			return res;
 		})
-		.catch(e => e.toString());
+		.catch(e => e.message);
+	return await dataRes;
 }

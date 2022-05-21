@@ -566,15 +566,16 @@ function cursBBNal(city = 'Минск') {
     return getDataFromApi(city, currArray);
 }
 async function getDataFromApi(city, currArray) {
-    return await fetch(`https://belarusbank.by/api/kursExchange?city=${city}`).then((result)=>result.json()
+    const dataRes = fetch(`https://belarusbank.by/api/kursExchange?city=${city}`).then((result)=>result.json()
     ).then((data)=>{
         const res = {};
         for(let key in data[0])currArray.forEach((item)=>{
             if (key === `${item}_in` || key === `${item}_out`) res[key] = data[0][key];
         });
         return res;
-    }).catch((e)=>e.toString()
+    }).catch((e)=>e.message
     );
+    return await dataRes;
 }
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
@@ -621,15 +622,16 @@ function cursBBCards() {
     return getDataFromApi(currArray);
 }
 async function getDataFromApi(currArray) {
-    return await fetch(`https://belarusbank.by/api/kurs_cards`).then((result)=>result.json()
+    const dataRes = fetch(`https://belarusbank.by/api/kurs_cards`).then((result)=>result.json()
     ).then((data)=>{
         const res = {};
         for(let key in data[0])currArray.forEach((item)=>{
             if (key === `${item}_in` || key === `${item}_out` || key === `kurs_date_time`) res[key] = data[0][key];
         });
         return res;
-    }).catch((e)=>e.toString()
+    }).catch((e)=>e.message
     );
+    return await dataRes;
 }
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["aVpBY","dV6cC"], "dV6cC", "parcelRequire0bae")
