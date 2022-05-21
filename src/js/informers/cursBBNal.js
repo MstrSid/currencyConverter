@@ -3,8 +3,8 @@ export function cursBBNal(city = 'Минск') {
 	return getDataFromApi(city, currArray);
 }
 
-async function getDataFromApi(city, currArray) {
-	const dataRes = fetch(`https://belarusbank.by/api/kursExchange?city=${city}`)
+function getDataFromApi(city, currArray) { //with then chaining
+	return fetch(`https://belarusbank.by/api/kursExchange?city=${city}`)
 		.then(result => result.json())
 		.then(data => {
 			const res = {};
@@ -18,5 +18,4 @@ async function getDataFromApi(city, currArray) {
 			return res;
 		})
 		.catch(e => e.message);
-	return await dataRes;
 }
