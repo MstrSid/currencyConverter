@@ -10,7 +10,7 @@ async function getDataFromApi(city, currArray) {
 			const res = {};
 			for (let key in data[0]) {
 				currArray.forEach(item => {
-					if (`${key}` === `${item}_in` || `${key}` === `${item}_out`) {
+					if (key === `${item}_in` || key === `${item}_out`) {
 						res[key] = data[0][key];
 					}
 				});

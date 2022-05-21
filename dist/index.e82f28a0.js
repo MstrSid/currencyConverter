@@ -527,10 +527,31 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"dV6cC":[function(require,module,exports) {
 var _cursBBNal = require("./informers/cursBBNal");
-_cursBBNal.cursBBNal('Бобруйск').then((data)=>console.log(data)
-);
+var _cursBBCards = require("./informers/cursBBCards");
+window.addEventListener("DOMContentLoaded", ()=>{
+    _cursBBNal.cursBBNal('Бобруйск').then((data)=>console.log(data)
+    );
+    _cursBBCards.cursBBCards().then((data)=>console.log(data)
+    );
+    const sectionMain = document.querySelector(".main");
+    const div = document.createElement("div");
+    div.classList.add("changeCards");
+    _cursBBCards.cursBBCards().then((data)=>{
+        div.innerHTML += `<div>
+<div class="changeCards__item">USD банк покупает: ${data.USDCARD_in} BYN</div>
+<div class="changeCards__item">EUR банк покупает: ${data.EURCARD_in} BYN</div>
+<div class="changeCards__item">RUB банк покупает: ${data.RUBCARD_in} BYN</div>
+</div>
+<div>
+<div class="changeCards__item">USD банк продает: ${data.USDCARD_out} BYN</div>
+<div class="changeCards__item">EUR банк продает: ${data.EURCARD_out} BYN</div>
+<div class="changeCards__item">RUB банк продает: ${data.RUBCARD_out} BYN</div>
+</div>`;
+        sectionMain.append(div);
+    });
+});
 
-},{"./informers/cursBBNal":"kyvuZ"}],"kyvuZ":[function(require,module,exports) {
+},{"./informers/cursBBNal":"kyvuZ","./informers/cursBBCards":"5rdnC"}],"kyvuZ":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "cursBBNal", ()=>cursBBNal
@@ -549,7 +570,7 @@ async function getDataFromApi(city, currArray) {
     ).then((data)=>{
         const res = {};
         for(let key in data[0])currArray.forEach((item)=>{
-            if (`${key}` === `${item}_in` || `${key}` === `${item}_out`) res[key] = data[0][key];
+            if (key === `${item}_in` || key === `${item}_out`) res[key] = data[0][key];
         });
         return res;
     }).catch((e)=>e.toString()
@@ -586,6 +607,31 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}]},["aVpBY","dV6cC"], "dV6cC", "parcelRequire0bae")
+},{}],"5rdnC":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cursBBCards", ()=>cursBBCards
+);
+function cursBBCards() {
+    let currArray = [
+        'USDCARD',
+        'EURCARD',
+        'RUBCARD'
+    ];
+    return getDataFromApi(currArray);
+}
+async function getDataFromApi(currArray) {
+    return await fetch(`https://belarusbank.by/api/kurs_cards`).then((result)=>result.json()
+    ).then((data)=>{
+        const res = {};
+        for(let key in data[0])currArray.forEach((item)=>{
+            if (key === `${item}_in` || key === `${item}_out` || key === `kurs_date_time`) res[key] = data[0][key];
+        });
+        return res;
+    }).catch((e)=>e.toString()
+    );
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["aVpBY","dV6cC"], "dV6cC", "parcelRequire0bae")
 
 //# sourceMappingURL=index.e82f28a0.js.map

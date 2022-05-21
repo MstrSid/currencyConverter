@@ -47,4 +47,17 @@ body {
   background: #f5e5cb;
 }
 
+.changeCards {
+  column-gap: 10px;
+  display: flex;
+}
+
+.changeCards__item {
+  margin-bottom: 10px;
+}
+
+.changeCards__item:last-child {
+  margin-bottom: 0;
+}
+
 /*# sourceMappingURL=index.e8265c92.css.map */

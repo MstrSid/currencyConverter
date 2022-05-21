@@ -1,5 +1,17 @@
 @import "./normalize";
 
-body{
+body {
   background: #f5e5cb;
+}
+
+.changeCards {
+  display: flex;
+  column-gap: 10px;
+
+  &__item {
+    margin-bottom: 10px;
+    &:last-child{
+      margin-bottom: 0;
+    }
+  }
 }
