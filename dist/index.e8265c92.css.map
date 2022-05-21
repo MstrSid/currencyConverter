@@ -1,0 +1,1 @@
+{"mappings":"ACCA;;;;;AA2BA;;;;;AAUA;;;;AAIA;;;;AAOA;;;;AAIA;;;;AAOA;;;;;AASA;;;;AAIA;;;;;AAKA;;;;;AD5EA","sources":["src/scss/style.scss","src/scss/_normalize.scss"],"sourcesContent":["@import \"./normalize\";\r\n\r\nbody{\r\n  background: #f5e5cb;\r\n}",null],"names":[],"version":3,"file":"index.e8265c92.css.map","sourceRoot":"/__parcel_source_root/"}
