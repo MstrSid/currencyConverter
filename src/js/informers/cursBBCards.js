@@ -6,16 +6,20 @@ export function cursBBCards() {
 async function getDataFromApi(currArray) { //with async await
 	try {
 		const req = await fetch(`https://belarusbank.by/api/kurs_cards`);
-		const json = await req.json();
-		const res = {};
-		for (let key in json[0]) {
-			currArray.forEach(item => {
-				if (key === `${item}_in` || key === `${item}_out` || key === `kurs_date_time`) {
-					res[key] = json[0][key];
-				}
-			});
+		if (req.ok) {
+			const json = await req.json();
+			const res = {};
+			for (let key in json[0]) {
+				currArray.forEach(item => {
+					if (key === `${item}_in` || key === `${item}_out` || key === `kurs_date_time`) {
+						res[key] = json[0][key];
+					}
+				});
+			}
+			return res;
+		} else {
+			throw new Error(`${req.status}`)
 		}
-		return res;
 	} catch (e) {
 		return Promise.reject(e)
 	}
