@@ -3,19 +3,20 @@ export function cursBBNal(city = 'Минск') {
 	return getDataFromApi(city, currArray);
 }
 
-function getDataFromApi(city, currArray) { //with then chaining
-	return fetch(`https://belarusbank.by/api/kursExchange?city=${city}`)
-		.then(result => result.json())
-		.then(data => {
-			const res = {};
-			for (let key in data[0]) {
-				currArray.forEach(item => {
-					if (key === `${item}_in` || key === `${item}_out`) {
-						res[key] = data[0][key];
-					}
-				});
-			}
-			return res;
-		})
-		.catch(e => e.message);
+async function getDataFromApi(city, currArray) {
+	try {
+		const req = await fetch(`https://belarusbank.by/api/kursExchange?city=${city}`);
+		const json = await req.json();
+		const res = {};
+		for (let key in json[0]) {
+			currArray.forEach(item => {
+				if (key === `${item}_in` || key === `${item}_out`) {
+					res[key] = json[0][key];
+				}
+			});
+		}
+		return res;
+	} catch (e) {
+		return Promise.reject(e)
+	}
 }

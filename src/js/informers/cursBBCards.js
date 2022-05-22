@@ -17,7 +17,6 @@ async function getDataFromApi(currArray) { //with async await
 		}
 		return res;
 	} catch (e) {
-		console.log(e.message);
+		return Promise.reject(e)
 	}
-
 }

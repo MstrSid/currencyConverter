@@ -548,7 +548,8 @@ window.addEventListener("DOMContentLoaded", ()=>{
 <div class="changeCards__item">RUB банк продает: ${data.RUBCARD_out} BYN</div>
 </div>`;
         sectionMain.append(div);
-    });
+    }).catch((e)=>console.log(e.message)
+    );
 });
 
 },{"./informers/cursBBNal":"kyvuZ","./informers/cursBBCards":"5rdnC"}],"kyvuZ":[function(require,module,exports) {
@@ -565,16 +566,18 @@ function cursBBNal(city = 'Минск') {
     ];
     return getDataFromApi(city, currArray);
 }
-function getDataFromApi(city, currArray) {
-    return fetch(`https://belarusbank.by/api/kursExchange?city=${city}`).then((result)=>result.json()
-    ).then((data)=>{
+async function getDataFromApi(city, currArray) {
+    try {
+        const req = await fetch(`https://belarusbank.by/api/kursExchange?city=${city}`);
+        const json = await req.json();
         const res = {};
-        for(let key in data[0])currArray.forEach((item)=>{
-            if (key === `${item}_in` || key === `${item}_out`) res[key] = data[0][key];
+        for(let key in json[0])currArray.forEach((item)=>{
+            if (key === `${item}_in` || key === `${item}_out`) res[key] = json[0][key];
         });
         return res;
-    }).catch((e)=>e.message
-    );
+    } catch (e) {
+        return Promise.reject(e);
+    }
 }
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
@@ -630,7 +633,7 @@ async function getDataFromApi(currArray) {
         });
         return res;
     } catch (e) {
-        console.log(e.message);
+        return Promise.reject(e);
     }
 }
 

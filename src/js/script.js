@@ -20,6 +20,6 @@ window.addEventListener("DOMContentLoaded", () => {
 <div class="changeCards__item">RUB банк продает: ${data.RUBCARD_out} BYN</div>
 </div>`;
 		sectionMain.append(div);
-	});
+	}).catch(e => console.log(e.message));
 });
 
