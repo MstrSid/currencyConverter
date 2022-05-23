@@ -1,4 +1,6 @@
 import {BBInformer} from "./informers/BBInformer";
+import {BBCardsBuyInputs} from "./elements/BBCardsBuyInputs";
+import {BBCardsSellInputs} from "./elements/BBCardsSellInputs";
 
 const bbCardCurrencyArr = ["USDCARD_in", "USDCARD_out", "EURCARD_in",
 	"EURCARD_out",
@@ -21,66 +23,57 @@ window.addEventListener("DOMContentLoaded", async () => {
 	const dataCards = await cardBB.getCardCursFromApi();
 	const dataNal = await nalBB.getNalCursFromApi();
 
-	async function renderInputs() {
-		const sectionMain = document.querySelector(".main");
-		const div = document.createElement("div");
-		div.classList.add("changeCardsBuy");
-		div.innerHTML += `<div>
-    <div>Беларусбанк по картам покупает</div>
-    <div class="changeCards__item">
-        <label for="bynInputIn">BYN: </label>
-        <input type="text"
-               id="bynInputIn"
-               name="bynInputIn"
-               value="0">
-    </div> 
-    <div class="changeCards__item">
-        <label for="usdInputIn">USD: </label>
-        <input type="text"
-               id="usdInputIn"
-               name="usdInputIn"
-               value="0">
-    </div>
-    <div class="changeCards__item">
-        <label for="eurInputIn">EUR: </label>
-        <input type="text"
-               id="eurInputIn"
-               name="eurInputIn"
-               value="0">
-    </div>
-    <div class="changeCards__item">
-        <label for="rubInputIn">RUB: </label>
-        <input type="text"
-               id="rubInputIn"
-               name="rubInputIn"
-               value="0">
-    </div>
-</div>`;
-		sectionMain.append(div);
-		fillDataCardsBuy(".changeCardsBuy", 1, "eur");
+	function renderInputs() {
+		const sectionMain = document.querySelector(".change-cards");
+		const bbCardsBuyInputs = new BBCardsBuyInputs();
+		const bbCardsSellInputs = new BBCardsSellInputs();
+
+		sectionMain.append(bbCardsBuyInputs.render());
+		sectionMain.append(bbCardsSellInputs.render());
+		fillDataCardsBuy(".change-cards__buy", 1, "eur");
+		fillDataCardsSell(".change-cards__sell", 1, "eur");
 		addListeners();
 	}
 
 	function addListeners() {
-		const blockCardsBuy = document.querySelector(".changeCardsBuy");
+		const blockCardsBuy = document.querySelector(".change-cards__buy");
+		const blockCardsSell = document.querySelector(".change-cards__sell");
 		blockCardsBuy.addEventListener("input", (e) => {
-			let inputNum = e.target.value.replace(/[^0-9.]+/g, "");
+			let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
 			switch (true) {
 				case e.target.id === "bynInputIn":
-					fillDataCardsBuy(".changeCardsBuy", inputNum, "byn");
+					fillDataCardsBuy(".change-cards__buy", inputNum, "byn");
 					break;
 				case e.target.id === "eurInputIn":
-					fillDataCardsBuy(".changeCardsBuy", inputNum, "eur");
+					fillDataCardsBuy(".change-cards__buy", inputNum, "eur");
 					break;
 				case e.target.id === "usdInputIn":
-					fillDataCardsBuy(".changeCardsBuy", inputNum, "usd");
+					fillDataCardsBuy(".change-cards__buy", inputNum, "usd");
 					break;
 				case e.target.id === "rubInputIn":
-					fillDataCardsBuy(".changeCardsBuy", inputNum, "rub");
+					fillDataCardsBuy(".change-cards__buy", inputNum, "rub");
 					break;
 			}
 			e.target.value = inputNum;
-		})
+		});
+		blockCardsSell.addEventListener("input", (e) => {
+			let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
+			switch (true) {
+				case e.target.id === "bynInputOut":
+					fillDataCardsSell(".change-cards__sell", inputNum, "byn");
+					break;
+				case e.target.id === "eurInputOut":
+					fillDataCardsSell(".change-cards__sell", inputNum, "eur");
+					break;
+				case e.target.id === "usdInputOut":
+					fillDataCardsSell(".change-cards__sell", inputNum, "usd");
+					break;
+				case e.target.id === "rubInputOut":
+					fillDataCardsSell(".change-cards__sell", inputNum, "rub");
+					break;
+			}
+			e.target.value = inputNum;
+		});
 	}
 
 	function fillDataCardsBuy(parentClass, num = 1, currency = "usd") {
@@ -94,7 +87,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 				bynIn = +dataCards.EURCARD_in * num;
 				break;
 			case "rub":
-				bynIn = +dataCards.RUBCARD_in/100 * num;
+				bynIn = +dataCards.RUBCARD_in / 100 * num;
 				break;
 			case "byn":
 				bynIn = num;
@@ -123,32 +116,46 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 	}
 
-	async function fillDataNal() {
-		let res;
-		let initialBYN = 1;
-		let usdIn = Number(initialBYN / +dataNal.USD_in).toFixed(4);
-		let usdOut = Number(initialBYN / +dataNal.USD_out).toFixed(4);
-		let eurIn = Number(initialBYN / +dataNal.EUR_in).toFixed(4);
-		let rubIn = Number((initialBYN / +dataNal.RUB_in) * 100).toFixed(4);
-		let eurOut = Number(initialBYN / +dataNal.EUR_out).toFixed(4);
-		let rubOut = Number((initialBYN / +dataNal.RUB_out) * 100).toFixed(4);
-		res = {
-			bynIn: initialBYN,
-			bynOut: initialBYN,
-			usdOut: usdOut,
-			usdIn: usdIn,
-			eurIn: eurIn,
-			rubIn: rubIn,
-			eurOut: eurOut,
-			rubOut: rubOut,
-		};
-		console.log(res);
-		return res;
+	function fillDataCardsSell(parentClass, num = 1, currency = "usd") {
+		const inputs = document.querySelector(parentClass).querySelectorAll("input");
+		let bynOut;
+		switch (currency) {
+			case "usd":
+				bynOut = +dataCards.USDCARD_out * num;
+				break;
+			case "eur":
+				bynOut = +dataCards.EURCARD_out * num;
+				break;
+			case "rub":
+				bynOut = +dataCards.RUBCARD_out / 100 * num;
+				break;
+			case "byn":
+				bynOut = num;
+				break;
+		}
+		let usdOut = Number(bynOut / +dataCards.USDCARD_out).toFixed(4);
+		let eurOut = Number(bynOut / +dataCards.EURCARD_out).toFixed(4);
+		let rubOut = Number(bynOut / +dataCards.RUBCARD_out * 100).toFixed(4);
+		bynOut = Number(bynOut).toFixed(4);
+		inputs.forEach(item => {
+			switch (item.id) {
+				case "bynInputOut":
+					item.value = bynOut;
+					break;
+				case "eurInputOut":
+					item.value = eurOut;
+					break;
+				case "usdInputOut":
+					item.value = usdOut;
+					break;
+				case "rubInputOut":
+					item.value = rubOut;
+					break;
+			}
+		});
+
 	}
-
-	//cardBB.getCardConversionFromApi().then(data => console.log(data));
-	renderInputs().catch(e => e.message);
-
+	renderInputs();
 });
 
 

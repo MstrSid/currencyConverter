@@ -527,6 +527,8 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"dV6cC":[function(require,module,exports) {
 var _bbinformer = require("./informers/BBInformer");
+var _bbcardsBuyInputs = require("./elements/BBCardsBuyInputs");
+var _bbcardsSellInputs = require("./elements/BBCardsSellInputs");
 const bbCardCurrencyArr = [
     "USDCARD_in",
     "USDCARD_out",
@@ -564,61 +566,51 @@ window.addEventListener("DOMContentLoaded", async ()=>{
     const nalBB = new _bbinformer.BBInformer(bbNalCurrencyArr, bbNalConversionArr, "Минск");
     const dataCards = await cardBB.getCardCursFromApi();
     const dataNal = await nalBB.getNalCursFromApi();
-    async function renderInputs() {
-        const sectionMain = document.querySelector(".main");
-        const div = document.createElement("div");
-        div.classList.add("changeCardsBuy");
-        div.innerHTML += `<div>
-    <div>Беларусбанк по картам покупает</div>
-    <div class="changeCards__item">
-        <label for="bynInputIn">BYN: </label>
-        <input type="text"
-               id="bynInputIn"
-               name="bynInputIn"
-               value="0">
-    </div> 
-    <div class="changeCards__item">
-        <label for="usdInputIn">USD: </label>
-        <input type="text"
-               id="usdInputIn"
-               name="usdInputIn"
-               value="0">
-    </div>
-    <div class="changeCards__item">
-        <label for="eurInputIn">EUR: </label>
-        <input type="text"
-               id="eurInputIn"
-               name="eurInputIn"
-               value="0">
-    </div>
-    <div class="changeCards__item">
-        <label for="rubInputIn">RUB: </label>
-        <input type="text"
-               id="rubInputIn"
-               name="rubInputIn"
-               value="0">
-    </div>
-</div>`;
-        sectionMain.append(div);
-        fillDataCardsBuy(".changeCardsBuy", 1, "eur");
+    function renderInputs() {
+        const sectionMain = document.querySelector(".change-cards");
+        const bbCardsBuyInputs = new _bbcardsBuyInputs.BBCardsBuyInputs();
+        const bbCardsSellInputs = new _bbcardsSellInputs.BBCardsSellInputs();
+        sectionMain.append(bbCardsBuyInputs.render());
+        sectionMain.append(bbCardsSellInputs.render());
+        fillDataCardsBuy(".change-cards__buy", 1, "eur");
+        fillDataCardsSell(".change-cards__sell", 1, "eur");
         addListeners();
     }
     function addListeners() {
-        const blockCardsBuy = document.querySelector(".changeCardsBuy");
+        const blockCardsBuy = document.querySelector(".change-cards__buy");
+        const blockCardsSell = document.querySelector(".change-cards__sell");
         blockCardsBuy.addEventListener("input", (e)=>{
-            let inputNum = e.target.value.replace(/[^0-9.]+/g, "");
+            let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
             switch(true){
                 case e.target.id === "bynInputIn":
-                    fillDataCardsBuy(".changeCardsBuy", inputNum, "byn");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "byn");
                     break;
                 case e.target.id === "eurInputIn":
-                    fillDataCardsBuy(".changeCardsBuy", inputNum, "eur");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "eur");
                     break;
                 case e.target.id === "usdInputIn":
-                    fillDataCardsBuy(".changeCardsBuy", inputNum, "usd");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "usd");
                     break;
                 case e.target.id === "rubInputIn":
-                    fillDataCardsBuy(".changeCardsBuy", inputNum, "rub");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "rub");
+                    break;
+            }
+            e.target.value = inputNum;
+        });
+        blockCardsSell.addEventListener("input", (e)=>{
+            let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
+            switch(true){
+                case e.target.id === "bynInputOut":
+                    fillDataCardsSell(".change-cards__sell", inputNum, "byn");
+                    break;
+                case e.target.id === "eurInputOut":
+                    fillDataCardsSell(".change-cards__sell", inputNum, "eur");
+                    break;
+                case e.target.id === "usdInputOut":
+                    fillDataCardsSell(".change-cards__sell", inputNum, "usd");
+                    break;
+                case e.target.id === "rubInputOut":
+                    fillDataCardsSell(".change-cards__sell", inputNum, "rub");
                     break;
             }
             e.target.value = inputNum;
@@ -662,34 +654,48 @@ window.addEventListener("DOMContentLoaded", async ()=>{
             }
         });
     }
-    async function fillDataNal() {
-        let res;
-        let initialBYN = 1;
-        let usdIn = Number(initialBYN / +dataNal.USD_in).toFixed(4);
-        let usdOut = Number(initialBYN / +dataNal.USD_out).toFixed(4);
-        let eurIn = Number(initialBYN / +dataNal.EUR_in).toFixed(4);
-        let rubIn = Number(initialBYN / +dataNal.RUB_in * 100).toFixed(4);
-        let eurOut = Number(initialBYN / +dataNal.EUR_out).toFixed(4);
-        let rubOut = Number(initialBYN / +dataNal.RUB_out * 100).toFixed(4);
-        res = {
-            bynIn: initialBYN,
-            bynOut: initialBYN,
-            usdOut: usdOut,
-            usdIn: usdIn,
-            eurIn: eurIn,
-            rubIn: rubIn,
-            eurOut: eurOut,
-            rubOut: rubOut
-        };
-        console.log(res);
-        return res;
+    function fillDataCardsSell(parentClass, num = 1, currency = "usd") {
+        const inputs = document.querySelector(parentClass).querySelectorAll("input");
+        let bynOut;
+        switch(currency){
+            case "usd":
+                bynOut = +dataCards.USDCARD_out * num;
+                break;
+            case "eur":
+                bynOut = +dataCards.EURCARD_out * num;
+                break;
+            case "rub":
+                bynOut = +dataCards.RUBCARD_out / 100 * num;
+                break;
+            case "byn":
+                bynOut = num;
+                break;
+        }
+        let usdOut = Number(bynOut / +dataCards.USDCARD_out).toFixed(4);
+        let eurOut = Number(bynOut / +dataCards.EURCARD_out).toFixed(4);
+        let rubOut = Number(bynOut / +dataCards.RUBCARD_out * 100).toFixed(4);
+        bynOut = Number(bynOut).toFixed(4);
+        inputs.forEach((item)=>{
+            switch(item.id){
+                case "bynInputOut":
+                    item.value = bynOut;
+                    break;
+                case "eurInputOut":
+                    item.value = eurOut;
+                    break;
+                case "usdInputOut":
+                    item.value = usdOut;
+                    break;
+                case "rubInputOut":
+                    item.value = rubOut;
+                    break;
+            }
+        });
     }
-    //cardBB.getCardConversionFromApi().then(data => console.log(data));
-    renderInputs().catch((e)=>e.message
-    );
+    renderInputs();
 });
 
-},{"./informers/BBInformer":"kwRoy"}],"kwRoy":[function(require,module,exports) {
+},{"./informers/BBInformer":"kwRoy","./elements/BBCardsBuyInputs":"3BTXJ","./elements/BBCardsSellInputs":"4Y2Mg"}],"kwRoy":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "BBInformer", ()=>BBInformer
@@ -792,6 +798,92 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}]},["aVpBY","dV6cC"], "dV6cC", "parcelRequire0bae")
+},{}],"3BTXJ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "BBCardsBuyInputs", ()=>BBCardsBuyInputs
+);
+class BBCardsBuyInputs {
+    render() {
+        const div = document.createElement("div");
+        div.classList.add("change-cards__buy");
+        div.innerHTML += `
+    <div class="change-cards__title">Беларусбанк по картам покупает</div>
+    <div class="change-cards__item">
+        <label for="bynInputIn">BYN: </label>
+        <input type="text"
+               id="bynInputIn"
+               name="bynInputIn"
+               value="0">
+    </div> 
+    <div class="change-cards__item">
+        <label for="usdInputIn">USD: </label>
+        <input type="text"
+               id="usdInputIn"
+               name="usdInputIn"
+               value="0">
+    </div>
+    <div class="change-cards__item">
+        <label for="eurInputIn">EUR: </label>
+        <input type="text"
+               id="eurInputIn"
+               name="eurInputIn"
+               value="0">
+    </div>
+    <div class="change-cards__item">
+        <label for="rubInputIn">RUB: </label>
+        <input type="text"
+               id="rubInputIn"
+               name="rubInputIn"
+               value="0">
+    </div>`;
+        return div;
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4Y2Mg":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "BBCardsSellInputs", ()=>BBCardsSellInputs
+);
+class BBCardsSellInputs {
+    render() {
+        const div = document.createElement("div");
+        div.classList.add("change-cards__sell");
+        div.innerHTML += `
+    <div class="change-cards__title">Беларусбанк по картам продает</div>
+    <div class="change-cards__item">
+        <label for="bynInputOut">BYN: </label>
+        <input type="text"
+               id="bynInputOut"
+               name="bynInputOut"
+               value="0">
+    </div> 
+    <div class="change-cards__item">
+        <label for="usdInputOut">USD: </label>
+        <input type="text"
+               id="usdInputOut"
+               name="usdInputOut"
+               value="0">
+    </div>
+    <div class="change-cards__item">
+        <label for="eurInputOut">EUR: </label>
+        <input type="text"
+               id="eurInputOut"
+               name="eurInputOut"
+               value="0">
+    </div>
+    <div class="change-cards__item">
+        <label for="rubInputOut">RUB: </label>
+        <input type="text"
+               id="rubInputOut"
+               name="rubInputOut"
+               value="0">
+    </div>`;
+        return div;
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["aVpBY","dV6cC"], "dV6cC", "parcelRequire0bae")
 
 //# sourceMappingURL=index.e82f28a0.js.map

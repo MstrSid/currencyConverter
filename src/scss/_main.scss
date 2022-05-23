@@ -1,0 +1,23 @@
+.change-cards {
+  display: flex;
+  column-gap: 10px;
+  background: #f8f8f8;
+  border-radius: 5px;
+  justify-content: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  &__title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  &__item {
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -1,17 +1,30 @@
-@import "./normalize";
+@import "utils/normalize";
+@import "utils/fonts";
+@import "./header";
+@import "./main";
 
 body {
+  font-family: 'Roboto', sans-serif;;
   background: #ffffff;
 }
 
-.changeCards {
-  display: flex;
-  column-gap: 10px;
-
-  &__item {
-    margin-bottom: 10px;
-    &:last-child{
-      margin-bottom: 0;
-    }
+input {
+  border: lightskyblue solid 1px;
+  border-radius: 4px;
+  font-size: 18px;
+  max-width: 250px;
+  &:focus{
+    outline: none;
+    border: #829fe1 solid 1px;
+    box-shadow: 0 2px 8px rgba(56, 169, 240, 0.2);
   }
+}
+
+label{
+  font-size: 18px;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
 }
