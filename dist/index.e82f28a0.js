@@ -575,25 +575,25 @@ window.addEventListener("DOMContentLoaded", ()=>{
         const dataCards = await cardBB.getCardCursFromApi();
         fillDataCardsBuy(".change-cards__buy", 1, "eur", dataCards);
         fillDataCardsSell(".change-cards__sell", 1, "eur", dataCards);
-        addListeners();
+        addListeners(dataCards);
     }
-    function addListeners() {
+    function addListeners(data) {
         const blockCardsBuy = document.querySelector(".change-cards__buy");
         const blockCardsSell = document.querySelector(".change-cards__sell");
         blockCardsBuy.addEventListener("input", (e)=>{
             let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
             switch(true){
                 case e.target.id === "bynInputIn":
-                    fillDataCardsBuy(".change-cards__buy", inputNum, "byn");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "byn", data);
                     break;
                 case e.target.id === "eurInputIn":
-                    fillDataCardsBuy(".change-cards__buy", inputNum, "eur");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "eur", data);
                     break;
                 case e.target.id === "usdInputIn":
-                    fillDataCardsBuy(".change-cards__buy", inputNum, "usd");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "usd", data);
                     break;
                 case e.target.id === "rubInputIn":
-                    fillDataCardsBuy(".change-cards__buy", inputNum, "rub");
+                    fillDataCardsBuy(".change-cards__buy", inputNum, "rub", data);
                     break;
             }
             e.target.value = inputNum;
@@ -602,16 +602,16 @@ window.addEventListener("DOMContentLoaded", ()=>{
             let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
             switch(true){
                 case e.target.id === "bynInputOut":
-                    fillDataCardsSell(".change-cards__sell", inputNum, "byn");
+                    fillDataCardsSell(".change-cards__sell", inputNum, "byn", data);
                     break;
                 case e.target.id === "eurInputOut":
-                    fillDataCardsSell(".change-cards__sell", inputNum, "eur");
+                    fillDataCardsSell(".change-cards__sell", inputNum, "eur", data);
                     break;
                 case e.target.id === "usdInputOut":
-                    fillDataCardsSell(".change-cards__sell", inputNum, "usd");
+                    fillDataCardsSell(".change-cards__sell", inputNum, "usd", data);
                     break;
                 case e.target.id === "rubInputOut":
-                    fillDataCardsSell(".change-cards__sell", inputNum, "rub");
+                    fillDataCardsSell(".change-cards__sell", inputNum, "rub", data);
                     break;
             }
             e.target.value = inputNum;
