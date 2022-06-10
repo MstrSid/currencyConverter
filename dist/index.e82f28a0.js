@@ -561,19 +561,20 @@ const bbNalConversionArr = [
     "RUB_EUR_in",
     "RUB_EUR_out"
 ];
-window.addEventListener("DOMContentLoaded", async ()=>{
+window.addEventListener("DOMContentLoaded", ()=>{
     const cardBB = new _bbinformer.BBInformer(bbCardCurrencyArr, bbCardConversionArr);
-    const nalBB = new _bbinformer.BBInformer(bbNalCurrencyArr, bbNalConversionArr, "Минск");
-    const dataCards = await cardBB.getCardCursFromApi();
-    const dataNal = await nalBB.getNalCursFromApi();
-    function renderInputs() {
+    //const nalBB = new BBInformer(bbNalCurrencyArr, bbNalConversionArr,
+    // "Минск");
+    //const dataNal = nalBB.getNalCursFromApi();
+    async function renderInputs() {
         const sectionMain = document.querySelector(".change-cards");
         const bbCardsBuyInputs = new _bbcardsBuyInputs.BBCardsBuyInputs();
         const bbCardsSellInputs = new _bbcardsSellInputs.BBCardsSellInputs();
         sectionMain.append(bbCardsBuyInputs.render());
         sectionMain.append(bbCardsSellInputs.render());
-        fillDataCardsBuy(".change-cards__buy", 1, "eur");
-        fillDataCardsSell(".change-cards__sell", 1, "eur");
+        const dataCards = await cardBB.getCardCursFromApi();
+        fillDataCardsBuy(".change-cards__buy", 1, "eur", dataCards);
+        fillDataCardsSell(".change-cards__sell", 1, "eur", dataCards);
         addListeners();
     }
     function addListeners() {
@@ -616,26 +617,26 @@ window.addEventListener("DOMContentLoaded", async ()=>{
             e.target.value = inputNum;
         });
     }
-    function fillDataCardsBuy(parentClass, num = 1, currency = "usd") {
+    function fillDataCardsBuy(parentClass, num = 1, currency = "usd", data) {
         const inputs = document.querySelector(parentClass).querySelectorAll("input");
         let bynIn;
         switch(currency){
             case "usd":
-                bynIn = +dataCards.USDCARD_in * num;
+                bynIn = +data.USDCARD_in * num;
                 break;
             case "eur":
-                bynIn = +dataCards.EURCARD_in * num;
+                bynIn = +data.EURCARD_in * num;
                 break;
             case "rub":
-                bynIn = +dataCards.RUBCARD_in / 100 * num;
+                bynIn = +data.RUBCARD_in / 100 * num;
                 break;
             case "byn":
                 bynIn = num;
                 break;
         }
-        let usdIn = Number(bynIn / +dataCards.USDCARD_in).toFixed(4);
-        let eurIn = Number(bynIn / +dataCards.EURCARD_in).toFixed(4);
-        let rubIn = Number(bynIn / +dataCards.RUBCARD_in * 100).toFixed(4);
+        let usdIn = Number(bynIn / +data.USDCARD_in).toFixed(4);
+        let eurIn = Number(bynIn / +data.EURCARD_in).toFixed(4);
+        let rubIn = Number(bynIn / +data.RUBCARD_in * 100).toFixed(4);
         bynIn = Number(bynIn).toFixed(4);
         inputs.forEach((item)=>{
             switch(item.id){
@@ -654,26 +655,26 @@ window.addEventListener("DOMContentLoaded", async ()=>{
             }
         });
     }
-    function fillDataCardsSell(parentClass, num = 1, currency = "usd") {
+    function fillDataCardsSell(parentClass, num = 1, currency = "usd", data) {
         const inputs = document.querySelector(parentClass).querySelectorAll("input");
         let bynOut;
         switch(currency){
             case "usd":
-                bynOut = +dataCards.USDCARD_out * num;
+                bynOut = +data.USDCARD_out * num;
                 break;
             case "eur":
-                bynOut = +dataCards.EURCARD_out * num;
+                bynOut = +data.EURCARD_out * num;
                 break;
             case "rub":
-                bynOut = +dataCards.RUBCARD_out / 100 * num;
+                bynOut = +data.RUBCARD_out / 100 * num;
                 break;
             case "byn":
                 bynOut = num;
                 break;
         }
-        let usdOut = Number(bynOut / +dataCards.USDCARD_out).toFixed(4);
-        let eurOut = Number(bynOut / +dataCards.EURCARD_out).toFixed(4);
-        let rubOut = Number(bynOut / +dataCards.RUBCARD_out * 100).toFixed(4);
+        let usdOut = Number(bynOut / +data.USDCARD_out).toFixed(4);
+        let eurOut = Number(bynOut / +data.EURCARD_out).toFixed(4);
+        let rubOut = Number(bynOut / +data.RUBCARD_out * 100).toFixed(4);
         bynOut = Number(bynOut).toFixed(4);
         inputs.forEach((item)=>{
             switch(item.id){
