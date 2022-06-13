@@ -570,10 +570,12 @@ window.addEventListener("DOMContentLoaded", ()=>{
     const sell = radioGroup.querySelector("#sell");
     const buy = radioGroup.querySelector("#buy");
     sell.addEventListener("click", ()=>{
-        renderInputs("BB", "sell");
+        renderInputs("BB", "sell").catch((e)=>console.log(e)
+        );
     });
     buy.addEventListener("click", ()=>{
-        renderInputs("BB", "buy");
+        renderInputs("BB", "buy").catch((e)=>console.log(e)
+        );
     });
     async function renderInputs(bank = "BB", type = "sell") {
         const sectionMain = document.querySelector(".change-cards");
@@ -718,6 +720,8 @@ window.addEventListener("DOMContentLoaded", ()=>{
             }
         });
     }
+    renderInputs().catch((e)=>console.log(e)
+    );
 });
 
 },{"./informers/BBInformer":"kwRoy","./elements/BBCardsBuyInputs":"3BTXJ","./elements/BBCardsSellInputs":"4Y2Mg"}],"kwRoy":[function(require,module,exports) {

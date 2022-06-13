@@ -183,6 +183,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		});
 
 	}
+	renderInputs().catch(e => console.log(e));
 });
 
 
