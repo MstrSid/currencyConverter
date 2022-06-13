@@ -23,58 +23,85 @@ window.addEventListener("DOMContentLoaded", () => {
 	// "Минск");
 	//const dataNal = nalBB.getNalCursFromApi();
 
-	async function renderInputs() {
-		const sectionMain = document.querySelector(".change-cards");
-		const bbCardsBuyInputs = new BBCardsBuyInputs();
-		const bbCardsSellInputs = new BBCardsSellInputs();
+	const radioGroup = document.querySelector("#typeChange");
+	const sell = radioGroup.querySelector("#sell");
+	const buy = radioGroup.querySelector("#buy");
 
-		sectionMain.append(bbCardsBuyInputs.render());
-		sectionMain.append(bbCardsSellInputs.render());
-		const dataCards = await cardBB.getCardCursFromApi();
-		fillDataCardsBuy(".change-cards__buy", 1, "eur", dataCards);
-		fillDataCardsSell(".change-cards__sell", 1, "eur", dataCards);
-		addListeners(dataCards);
+	sell.addEventListener("click", () => {
+		renderInputs("BB", "sell").catch(e => console.log(e));
+	});
+
+	buy.addEventListener("click", () => {
+		renderInputs("BB", "buy").catch(e => console.log(e));
+	});
+
+	async function renderInputs(bank = "BB", type = "sell") {
+		const sectionMain = document.querySelector(".change-cards");
+		while (sectionMain.hasChildNodes()) {
+			sectionMain.removeChild(sectionMain.lastChild);
+		}
+		let informer;
+		if (bank === "BB" && type === "sell") {
+			informer = new BBCardsSellInputs();
+			sectionMain.append(informer.render());
+			let dataCards = await cardBB.getCardCursFromApi();
+			fillDataCardsSell(".change-cards__sell", 1, "eur", dataCards);
+			addListenersInputs(dataCards, "sell");
+		} else if (bank === "BB" && type === "buy") {
+			informer = new BBCardsBuyInputs();
+			sectionMain.append(informer.render());
+			let dataCards = await cardBB.getCardCursFromApi();
+			fillDataCardsBuy(".change-cards__buy", 1, "eur", dataCards);
+			addListenersInputs(dataCards, "buy");
+		}
 	}
 
-	function addListeners(data) {
-		const blockCardsBuy = document.querySelector(".change-cards__buy");
-		const blockCardsSell = document.querySelector(".change-cards__sell");
-		blockCardsBuy.addEventListener("input", (e) => {
-			let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
-			switch (true) {
-				case e.target.id === "bynInputIn":
-					fillDataCardsBuy(".change-cards__buy", inputNum, "byn", data);
-					break;
-				case e.target.id === "eurInputIn":
-					fillDataCardsBuy(".change-cards__buy", inputNum, "eur", data);
-					break;
-				case e.target.id === "usdInputIn":
-					fillDataCardsBuy(".change-cards__buy", inputNum, "usd", data);
-					break;
-				case e.target.id === "rubInputIn":
-					fillDataCardsBuy(".change-cards__buy", inputNum, "rub", data);
-					break;
+	function addListenersInputs(data, type) {
+		switch (type) {
+			case "buy": {
+				const blockCardsBuy = document.querySelector(".change-cards__buy");
+				blockCardsBuy.addEventListener("input", (e) => {
+					let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
+					switch (true) {
+						case e.target.id === "bynInputIn":
+							fillDataCardsBuy(".change-cards__buy", inputNum, "byn", data);
+							break;
+						case e.target.id === "eurInputIn":
+							fillDataCardsBuy(".change-cards__buy", inputNum, "eur", data);
+							break;
+						case e.target.id === "usdInputIn":
+							fillDataCardsBuy(".change-cards__buy", inputNum, "usd", data);
+							break;
+						case e.target.id === "rubInputIn":
+							fillDataCardsBuy(".change-cards__buy", inputNum, "rub", data);
+							break;
+					}
+					e.target.value = inputNum;
+				});
+				break;
 			}
-			e.target.value = inputNum;
-		});
-		blockCardsSell.addEventListener("input", (e) => {
-			let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
-			switch (true) {
-				case e.target.id === "bynInputOut":
-					fillDataCardsSell(".change-cards__sell", inputNum, "byn", data);
-					break;
-				case e.target.id === "eurInputOut":
-					fillDataCardsSell(".change-cards__sell", inputNum, "eur", data);
-					break;
-				case e.target.id === "usdInputOut":
-					fillDataCardsSell(".change-cards__sell", inputNum, "usd", data);
-					break;
-				case e.target.id === "rubInputOut":
-					fillDataCardsSell(".change-cards__sell", inputNum, "rub", data);
-					break;
+			case "sell": {
+				const blockCardsSell = document.querySelector(".change-cards__sell");
+				blockCardsSell.addEventListener("input", (e) => {
+					let inputNum = e.target.value.replace(/[^0-9.]+/g, "").slice(0, 10);
+					switch (true) {
+						case e.target.id === "bynInputOut":
+							fillDataCardsSell(".change-cards__sell", inputNum, "byn", data);
+							break;
+						case e.target.id === "eurInputOut":
+							fillDataCardsSell(".change-cards__sell", inputNum, "eur", data);
+							break;
+						case e.target.id === "usdInputOut":
+							fillDataCardsSell(".change-cards__sell", inputNum, "usd", data);
+							break;
+						case e.target.id === "rubInputOut":
+							fillDataCardsSell(".change-cards__sell", inputNum, "rub", data);
+							break;
+					}
+					e.target.value = inputNum;
+				});
 			}
-			e.target.value = inputNum;
-		});
+		}
 	}
 
 	function fillDataCardsBuy(parentClass, num = 1, currency = "usd", data) {
@@ -156,7 +183,6 @@ window.addEventListener("DOMContentLoaded", () => {
 		});
 
 	}
-	renderInputs();
 });
 
 
