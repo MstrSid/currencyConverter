@@ -737,7 +737,7 @@ class BBInformer {
     }
     async getCardCursFromApi() {
         try {
-            const req = await fetch(`https://belarusbank.by/api/kurs_cards`);
+            const req = await fetch(`https://cors-anywhere.herokuapp.com/https://belarusbank.by/api/kurs_cards`);
             if (req.ok) {
                 const json = await req.json();
                 const res = {};
